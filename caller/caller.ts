@@ -1,6 +1,4 @@
-import { error } from "console";
-
-const url = "http://localhost:3000/ping";
+const url = "http://ping-server:3000/ping"; //compose maps service name to ip
 
 async function ping(): Promise<void> {
   try {

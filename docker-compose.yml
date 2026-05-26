@@ -1,0 +1,17 @@
+services:
+  ping-server:
+    build: ./server
+    networks:
+      - app-net
+    ports:
+      - "3000:3000"
+  caller:
+    build: ./caller
+    networks:
+      - app-net
+    depends_on:
+      - ping-server
+
+networks:
+  app-net:
+    driver: bridge
