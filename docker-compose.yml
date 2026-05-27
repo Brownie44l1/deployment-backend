@@ -1,16 +1,40 @@
 services:
-  ping-server:
-    build: ./server
-    networks:
-      - app-net
+  api-server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: api-server
     ports:
       - "3000:3000"
-  caller:
-    build: ./caller
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
     networks:
       - app-net
     depends_on:
-      - ping-server
+      - caddy
+      - buildkit
+    environment:
+      - BUILDKIT_HOST=docker-container://buildkit
+
+  buildkit:
+    image: moby/buildkit
+    container_name: buildkit
+    privileged: true
+    networks:
+      - app-net
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - app-net
 
 networks:
   app-net:
